@@ -15,7 +15,7 @@ export default function App() {
   };
 
   const checkMatchesForThree = () => {
-    for (let i = 0; i < randomColors.length; i++) {
+    for (let i = 0; i < randomColors.length - width * 2; i++) {
       const columnsMatched = [i, i + width, i + width * 2];
       const matchedColor = randomColors[i];
       if (columnsMatched.every((color) => randomColors[color] === matchedColor)) {
@@ -24,13 +24,64 @@ export default function App() {
     }
   };
   const checkMatchesForFour = () => {
-    for (let i = 0; i < randomColors.length; i++) {
-      const columnsMatched = [i, i + width, i + width * 2,i+width*3];
+    for (let i = 0; i < randomColors.length - width * 3; i++) {
+      const columnsMatched = [i, i + width, i + width * 2, i + width * 3];
       const matchedColor = randomColors[i];
       if (columnsMatched.every((color) => randomColors[color] === matchedColor)) {
         columnsMatched.forEach((number) => (randomColors[number] = ""));
       }
     }
+  };
+  const checkMatchesForThreeInRows = () => {
+    for (let i = 0; i < randomColors.length - width * 3; i++) {
+      const rowsMatched = [i, i + 1, i + 2];
+      const matchedColor = randomColors[i];
+      const skippedCheck = generateEveryTwoLastItemsinARow();
+      if (skippedCheck.includes(i)) continue;
+      if (rowsMatched.every((color) => randomColors[color] === matchedColor)) {
+        rowsMatched.forEach((number) => (randomColors[number] = ""));
+      }
+    }
+  };
+  const checkMatchesForFourInRows = () => {
+    for (let i = 0; i < randomColors.length - width * 3; i++) {
+      const rowsMatched = [i, i + 1, i + 2, i + 3];
+      const matchedColor = randomColors[i];
+      const skippedCheck = generateEveryThreeLastItemsinARow();
+      if (skippedCheck.includes(i)) continue;
+      if (rowsMatched.every((color) => randomColors[color] === matchedColor)) {
+        rowsMatched.forEach((number) => (randomColors[number] = ""));
+      }
+    }
+  };
+  const generateEveryTwoLastItemsinARow = (): number[] => {
+    let first: number = width - 2;
+    let second: number = width - 1;
+    let result: number[] = [first, second];
+
+    for (let i: number = 0; i < width - 1; i++) {
+      first += width;
+      second += width;
+      result.push(first);
+      result.push(second);
+    }
+    return result;
+  };
+  const generateEveryThreeLastItemsinARow = (): number[] => {
+    let first: number = width - 2;
+    let second: number = width - 1;
+    let third: number = width - 3;
+    let result: number[] = [first, second, third];
+
+    for (let i: number = 0; i < width - 1; i++) {
+      first += width;
+      second += width;
+      third += width;
+      result.push(first);
+      result.push(second);
+      result.push(third);
+    }
+    return result;
   };
 
   useEffect(() => {
@@ -40,13 +91,19 @@ export default function App() {
   useEffect(() => {
     const myInterval = setInterval(() => {
       checkMatchesForThree();
-      checkMatchesForFour()
+      checkMatchesForFour();
+      checkMatchesForThreeInRows();
+      checkMatchesForFourInRows();
       setRandomColors([...randomColors]);
     }, 100);
     return () => clearInterval(myInterval);
-  }, [checkMatchesForThree,randomColors,checkMatchesForFour]);
-
-  console.log(randomColors);
+  }, [
+    checkMatchesForThree,
+    randomColors,
+    checkMatchesForFour,
+    checkMatchesForThreeInRows,
+    checkMatchesForFourInRows,
+  ]);
 
   return (
     <>
