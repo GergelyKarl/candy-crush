@@ -67,6 +67,7 @@ export default function App() {
     }
     return result;
   };
+
   const generateEveryThreeLastItemsinARow = (): number[] => {
     let first: number = width - 2;
     let second: number = width - 1;
@@ -84,6 +85,28 @@ export default function App() {
     return result;
   };
 
+  const generateNthRow = (n: number) => {
+    const tempArr = new Array(n).fill("");
+    return tempArr.map((_, index) => index);
+  };
+
+  const fallDown = () => {
+    for (let i = 0; i < 64 - width; i++) {
+      const firstRow=generateNthRow(width)
+      const isFirstRow=firstRow.includes(i)
+      if (isFirstRow &&randomColors[i] === "") {
+     
+        let randomNumber=Math.floor(Math.random()*randomColors.length)
+        randomColors[i]=randomColors[randomNumber]
+      }
+      if ((randomColors[i + width]) === "") {
+        randomColors[i + width] = randomColors[i];
+        randomColors[i] = "";
+        // setRandomColors(randomColors)
+      }
+    }
+  };
+
   useEffect(() => {
     createBoard();
   }, []);
@@ -94,6 +117,7 @@ export default function App() {
       checkMatchesForFour();
       checkMatchesForThreeInRows();
       checkMatchesForFourInRows();
+      fallDown();
       setRandomColors([...randomColors]);
     }, 100);
     return () => clearInterval(myInterval);
@@ -103,6 +127,7 @@ export default function App() {
     checkMatchesForFour,
     checkMatchesForThreeInRows,
     checkMatchesForFourInRows,
+    fallDown,
   ]);
 
   return (
